@@ -1,0 +1,94 @@
+@page "/EditPage/{studentId:int}"
+@using ServerBlazorEF.Data
+@using ServerBlazorEF.Models
+@inject StudentService studentService
+@inject NavigationManager NavManager
+
+
+<h2> Edit Page</h2>
+
+  <input placeholder="First Name" @bind="@firstName" /><br />
+  <input placeholder="Last Name" @bind="@lastName" /><br />
+
+  <select placeholder="School"@bind="@school">
+      <option></option>
+     <option>Medicine</option>
+     <option>Nursing</option>
+     <option>Computing</option>
+     <option>Science</option>
+     <option>Mining</option>
+</select><br />
+
+  <button @onclick="@Update" class="btn btn-warning">Update</button>
+  <p><button @onclick="@returnToStudentpage">Back to home page</button></p>
+
+
+
+@code{
+    List<Student> students;
+
+    int studentId;
+    string firstName;
+    string lastName;
+    string school;
+
+  [Parameter]
+   public int StudentId { get; set; }
+
+
+    Student student;
+
+    protected override async Task OnInitializedAsync()
+        {
+           await Show(StudentId);
+        }
+
+    protected async Task load()
+        {
+            students = await studentService.GetStudentsAsync();
+        }
+    
+
+    
+    protected void ClearFields()
+        {
+         
+            firstName = string.Empty;
+            lastName = string.Empty;
+            school = string.Empty;
+        }
+
+    protected async Task Update()
+    {
+
+        Student s = new Student()
+        {
+            StudentId = studentId,
+            FirstName = firstName,
+            LastName = lastName,
+            School = school
+        };
+
+        await studentService.UpdateStudentAsync(studentId, s);
+        ClearFields();
+        await load();
+
+        returnToStudentpage();
+    }
+    
+    protected async Task Show(int id)
+        {
+            student = await studentService.GetStudentByIdAsync(id);
+            studentId = student.StudentId;
+            firstName = student.FirstName;
+            lastName = student.LastName;
+            school = student.School;
+     
+        }
+    
+       private void returnToStudentpage()
+        {
+            NavManager.NavigateTo("/");
+        } 
+
+}

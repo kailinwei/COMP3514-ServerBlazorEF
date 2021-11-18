@@ -1,0 +1,84 @@
+ @page "/AddPage"
+
+@inject NavigationManager NavManager
+@inject StudentService studentService
+@using ServerBlazorEF.Data
+@using ServerBlazorEF.Models
+
+
+<h2> Add Page</h2>
+
+<h6>Enter your first name here:</h6>
+  <input placeholder="First Name" @bind="@firstName" /><br />
+<h6>Enter your last name here:</h6>
+  <input placeholder="Last Name" @bind="@lastName" /><br />
+ 
+  <h6>Choose your school here:</h6>
+  <select placeholder="School" @bind="@school">
+      <option></option>
+     <option>Medicine</option>
+     <option>Nursing</option>
+     <option>Computing</option>
+     <option>Science</option>
+     <option>Mining</option>
+</select>
+  <br/>           
+  <p><button @onclick="@Insert" class="btn btn-warning">Insert</button></p>
+  <p><button @onclick="@returnToStudentpage">Back to home page</button></p>
+  
+
+
+
+
+@code {
+      List<Student> students;
+
+    int studentId;
+    string firstName;
+    string lastName;
+    string school;
+
+    Student student;
+ 
+
+
+    protected async Task Insert()
+    {
+
+        Student s = new Student()
+        {
+  
+            FirstName = firstName,
+            LastName = lastName,
+            School = school
+        };
+
+        await studentService.InsertStudentAsync(s);
+         returnToStudentpage();
+             
+        
+        ClearFields();
+      
+    }
+
+    protected void ClearFields()
+    {
+       
+        firstName = string.Empty;
+        lastName = string.Empty;
+        school = string.Empty;
+    }
+
+    protected void Add()
+    {
+        ClearFields();
+     
+    }
+
+   private void returnToStudentpage()
+    {
+        NavManager.NavigateTo("/");
+    } 
+
+
+}
